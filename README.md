@@ -38,8 +38,3 @@ API REST para gerenciamento de projetos, tarefas e usuários desenvolvida em Nod
 - Node.js (v18 ou superior)
 - NPM (v9 ou superior)
 
-### Instalação
-
-1. Clone o repositório:
-```bash
-git clone https://github.com/seu-usuario/gerenciador-projetos-api.git
