@@ -1,27 +1,23 @@
-class Task {
-    static tasks = []
-    static lastId = 0
-  
-    constructor(title, projectId, userId) {
-      this.id = Task.lastId + 1
-      this.title = title
-      this.status = false
-      this.projectId = projectId
-      this.userId = userId
-      Task.lastId = this.id //salvar o ultimo o ID, importante nao mexe pra nao dar BUG!!!
-    }
-  
-    save() {
-      Task.tasks.push(this)
-    }
-  
-    static fetchAll() {
-      return Task.tasks
-    }
-  
-    static delete(id) {
-      Task.tasks = Task.tasks.filter(task => task.id !== id)
-    }
+const { DataTypes } = require('sequelize')
+const sequelize = require('../config/database')
+const Usuario = require('./user')
+const Projeto = require('./project') // Note: O nome exportado de 'project' pode ser ajustado se necessário
+
+const Tarefa = sequelize.define('Tarefa', {
+  titulo: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  status: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   }
-  
-  module.exports = Task
+})
+
+// Definindo os relacionamentos
+Tarefa.belongsTo(Usuario, { foreignKey: 'usuarioId' })
+Tarefa.belongsTo(Projeto, { foreignKey: 'projetoId' })
+Usuario.hasMany(Tarefa, { foreignKey: 'usuarioId' })
+Projeto.hasMany(Tarefa, { foreignKey: 'projetoId' })
+
+module.exports = Tarefa

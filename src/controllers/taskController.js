@@ -1,34 +1,41 @@
 const Task = require('../models/task')
-const Project = require('../models/project')
-const User = require('../models/user')
 
-class TaskController {
-  static createTask(req, res) {
-    const { title, projectId, userId } = req.body
+const TaskController = {
+  createTask: async (req, res) => {
+    try {
+      const { titulo, projetoId, usuarioId } = req.body
+      if (!titulo || !projetoId || !usuarioId) {
+        return res.status(400).json({ erro: 'Todos os campos são obrigatórios' })
+      }
 
-    if (!title || !projectId || !userId) {
-      return res.status(400).json({ error: 'Todos os campos são obrigatórios' })
+      const tarefa = await Task.create({ titulo, projetoId, usuarioId })
+      res.status(201).json(tarefa)
+    } catch (err) {
+      res.status(500).json({ erro: 'Erro ao criar tarefa' })
     }
+  },
 
-    // Verifica se projeto e usuário existem
-    if (!Project.findById(projectId) || !User.findById(userId)) {
-      return res.status(400).json({ error: 'Projeto ou usuário inválido' })
+  listTasks: async (req, res) => {
+    try {
+      const tarefas = await Task.findAll()
+      res.json(tarefas)
+    } catch (err) {
+      res.status(500).json({ erro: 'Erro ao listar tarefas' })
     }
+  },
 
-    const task = new Task(title, projectId, userId)
-    task.save()
-
-    res.status(201).json(task)
-  }
-
-  static listTasks(req, res) {
-    res.json(Task.fetchAll())
-  }
-
-  static deleteTask(req, res) {
-    const id = parseInt(req.params.id)
-    Task.delete(id)
-    res.status(204).send()
+  deleteTask: async (req, res) => {
+    try {
+      const { id } = req.params
+      const deletado = await Task.destroy({ where: { id } })
+      if (deletado) {
+        res.status(204).send()
+      } else {
+        res.status(404).json({ erro: 'Tarefa não encontrada' })
+      }
+    } catch (err) {
+      res.status(500).json({ erro: 'Erro ao excluir tarefa' })
+    }
   }
 }
 

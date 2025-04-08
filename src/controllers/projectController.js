@@ -1,27 +1,42 @@
 const Project = require('../models/project')
 
-class ProjectController {
-  static createProject(req, res) {
-    const { name, description } = req.body
+const ProjectController = {
+  createProject: async (req, res) => {
+    try {
+      const { titulo, descricao, usuarioId } = req.body
+      if (!titulo || !descricao) {
+        return res.status(400).json({ erro: 'Todos os campos são obrigatórios' })
+      }
 
-    if (!name || !description) {
-      return res.status(400).json({ error: 'Todos os campos são obrigatórios o preenchimentp' })
+      // Cria o projeto e, se desejar, associa a um usuário (usuarioId opcional)
+      const projeto = await Project.create({ titulo, descricao, usuarioId })
+      res.status(201).json(projeto)
+    } catch (err) {
+      res.status(500).json({ erro: 'Erro ao criar projeto' })
     }
+  },
 
-    const project = new Project(name, description)
-    project.save()
+  listProjects: async (req, res) => {
+    try {
+      const projetos = await Project.findAll()
+      res.json(projetos)
+    } catch (err) {
+      res.status(500).json({ erro: 'Erro ao listar projetos' })
+    }
+  },
 
-    res.status(201).json(project)
-  }
-
-  static listProjects(req, res) {
-    res.json(Project.fetchAll())
-  }
-
-  static deleteProject(req, res) {
-    const id = parseInt(req.params.id)
-    Project.delete(id)
-    res.status(204).send()
+  deleteProject: async (req, res) => {
+    try {
+      const { id } = req.params
+      const deletado = await Project.destroy({ where: { id } })
+      if (deletado) {
+        res.status(204).send()
+      } else {
+        res.status(404).json({ erro: 'Projeto não encontrado' })
+      }
+    } catch (err) {
+      res.status(500).json({ erro: 'Erro ao excluir projeto' })
+    }
   }
 }
 

@@ -1,27 +1,37 @@
-const express = require('express')
-const UserController = require('./controllers/userController')
-const ProjectController = require('./controllers/projectController')
-const TaskController = require('./controllers/taskController')
+const path = require('path')
+require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') })
 
+const express = require('express')
 const app = express()
+
+// Conexão com o banco via Sequelize
+const sequelize = require('./config/database')
+
+// Rotas organizadas por arquivo (pasta "Routers")
+const userRoutes = require('./Routers/userRouters')
+const projectRoutes = require('./Routers/projectRouters')
+const taskRoutes = require('./Routers/taskRouters')
+
 app.use(express.json())
 
-// Rotas de usuários como aprendido em qualidade de sofware
-app.post('/api/users', UserController.createUser)
-app.get('/api/users', UserController.listUsers)
-app.delete('/api/users/:id', UserController.deleteUser)
+// Usa os arquivos de rotas com o prefixo /api
+app.use('/api', userRoutes)
+app.use('/api', projectRoutes)
+app.use('/api', taskRoutes)
 
-// Rotas de projetos como aprendido em qualidade de sofware
-app.post('/api/projects', ProjectController.createProject)
-app.get('/api/projects', ProjectController.listProjects)
-app.delete('/api/projects/:id', ProjectController.deleteProject)
+// Função async para sincronizar os modelos e iniciar o servidor
+async function startServer() {
+  try {
+    await sequelize.sync()
+    console.log('Banco de dados sincronizado com Sequelize')
 
-// Rotas de tarefas como aprendido em qualidade de sofware
-app.post('/api/tasks', TaskController.createTask)
-app.get('/api/tasks', TaskController.listTasks)
-app.delete('/api/tasks/:id', TaskController.deleteTask)
+    const PORT = process.env.PORT || 3000
+    app.listen(PORT, () => {
+      console.log(`Servidor rodando na porta ${PORT}`)
+    })
+  } catch (error) {
+    console.error('Erro ao sincronizar com o banco de dados:', error)
+  }
+}
 
-const PORT = 3000
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`)
-})
+startServer()
