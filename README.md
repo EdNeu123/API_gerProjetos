@@ -1,40 +1,42 @@
-# Gerenciador de Projetos API
+# 📁 API - Gerenciador de Projetos
 
 [![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Express](https://img.shields.io/badge/Express-000000?style=flat&logo=express&logoColor=white)](https://expressjs.com/)
+[![Sequelize](https://img.shields.io/badge/Sequelize-52B0E7?style=flat&logo=sequelize&logoColor=white)](https://sequelize.org/)
+[![MySQL](https://img.shields.io/badge/MySQL-00758F?style=flat&logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![JWT](https://img.shields.io/badge/JWT-000000?style=flat&logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
 
-API REST para gerenciamento de projetos, tarefas e usuários desenvolvida em Node.js com arquitetura MVC.
+API RESTful desenvolvida em **Node.js** para o gerenciamento de projetos, tarefas e usuários, utilizando autenticação com **JWT** e arquitetura **MVC**. Ideal para controle de produtividade e organização de equipes.
 
-## 📋 Funcionalidades Principais
+---
 
-### 👥 Usuários
-- Criação de usuários com autenticação básica
-- Listagem completa de usuários
-- Atualização de dados
-- Remoção de usuários
+## ⚙️ Funcionalidades
 
-### 📂 Projetos
-- Cadastro de novos projetos
-- Listagem de todos os projetos
-- Edição de detalhes do projeto
-- Exclusão de projetos
+### 👤 Usuários
+- Registro de novos usuários
+- Autenticação com **JWT**
+- Listagem, edição e exclusão de usuários (rotas protegidas)
+
+### 📁 Projetos
+- Criação de projetos vinculados ao usuário autenticado
+- Listagem geral ou por usuário
+- Atualização e remoção de projetos
 
 ### ✅ Tarefas
-- Criação de tarefas vinculadas a projetos e usuários
+- Criação de tarefas associadas a projetos
 - Atualização de status (concluído/pendente)
-- Listagem completa de tarefas
-- Remoção de tarefas
+- Listagem por projeto
+- Exclusão de tarefas
 
-## 🛠️ Tecnologias Utilizadas
+---
 
-- **Node.js**: Ambiente de execução JavaScript
-- **Express**: Framework para construção da API
-- **MVC**: Arquitetura de software (Model-View-Controller)
-- **Nodemon**: Recarregamento automático do servidor
+## 🧪 Tecnologias e Ferramentas
 
-## 🚀 Começando
-
-### Pré-requisitos
-- Node.js (v18 ou superior)
-- NPM (v9 ou superior)
-
+- **Node.js** – ambiente de execução
+- **Express** – framework para rotas e middlewares
+- **Sequelize** – ORM para interação com banco MySQL
+- **MySQL** – banco de dados relacional
+- **JWT** – autenticação segura
+- **Nodemon** – recarregamento automático durante o desenvolvimento
+- **Dotenv** – variáveis de ambiente
+- **Docker (opcional)** – para facilitar o setup do ambiente
