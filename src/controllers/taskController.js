@@ -1,42 +1,68 @@
-const Task = require('../models/task')
+const Task = require('../models/task');
 
-const TaskController = {
-  createTask: async (req, res) => {
-    try {
-      const { titulo, projetoId, usuarioId } = req.body
-      if (!titulo || !projetoId || !usuarioId) {
-        return res.status(400).json({ erro: 'Todos os campos são obrigatórios' })
-      }
-
-      const tarefa = await Task.create({ titulo, projetoId, usuarioId })
-      res.status(201).json(tarefa)
-    } catch (err) {
-      res.status(500).json({ erro: 'Erro ao criar tarefa' })
-    }
-  },
-
-  listTasks: async (req, res) => {
-    try {
-      const tarefas = await Task.findAll()
-      res.json(tarefas)
-    } catch (err) {
-      res.status(500).json({ erro: 'Erro ao listar tarefas' })
-    }
-  },
-
-  deleteTask: async (req, res) => {
-    try {
-      const { id } = req.params
-      const deletado = await Task.destroy({ where: { id } })
-      if (deletado) {
-        res.status(204).send()
-      } else {
-        res.status(404).json({ erro: 'Tarefa não encontrada' })
-      }
-    } catch (err) {
-      res.status(500).json({ erro: 'Erro ao excluir tarefa' })
-    }
+// POST /api/tasks
+async function createTask(req, res) {
+  try {
+    const { titulo, projetoId, usuarioId, status } = req.body;
+    const novaTarefa = await Task.create({ titulo, projetoId, usuarioId, status });
+    res.status(201).json(novaTarefa);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: 'Erro ao criar tarefa' });
   }
 }
 
-module.exports = TaskController
+// GET /api/tasks
+async function listTasks(req, res) {
+  try {
+    const tarefas = await Task.findAll();
+    res.json(tarefas);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: 'Erro ao listar tarefas' });
+  }
+}
+
+// PUT /api/tasks/:id
+async function updateTask(req, res) {
+  try {
+    const { id } = req.params;
+    const { titulo, status } = req.body;
+
+    const tarefa = await Task.findByPk(id);
+    if (!tarefa) {
+      return res.status(404).json({ erro: 'Tarefa não encontrada' });
+    }
+
+    tarefa.titulo = titulo ?? tarefa.titulo;
+    tarefa.status = status ?? tarefa.status;
+
+    await tarefa.save();
+    res.json(tarefa);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: 'Erro ao atualizar tarefa' });
+  }
+}
+
+// DELETE /api/tasks/:id
+async function deleteTask(req, res) {
+  try {
+    const { id } = req.params;
+    const deletado = await Task.destroy({ where: { id } });
+    if (!deletado) {
+      return res.status(404).json({ erro: 'Tarefa não encontrada' });
+    }
+    res.status(204).send();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: 'Erro ao excluir tarefa' });
+  }
+}
+
+module.exports = {
+  createTask,
+  listTasks,
+  updateTask,
+  deleteTask
+};

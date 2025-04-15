@@ -1,3 +1,7 @@
+DROP TABLE IF EXISTS Tarefa;
+DROP TABLE IF EXISTS Projeto;
+DROP TABLE IF EXISTS Usuario;
+
 -- Criação do banco de dados
 CREATE DATABASE IF NOT EXISTS api_project;
 USE api_project;
@@ -10,11 +14,16 @@ CREATE TABLE Usuario (
     senha VARCHAR(255) NOT NULL
 );
 
--- Tabela de projetos
+-- Tabela de projetos (agora com usuarioId)
 CREATE TABLE Projeto (
     id INT AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(255) NOT NULL,
-    descricao TEXT NOT NULL
+    descricao TEXT NOT NULL,
+    usuarioId INT NOT NULL,
+    CONSTRAINT fk_projeto_usuario
+        FOREIGN KEY (usuarioId)
+        REFERENCES Usuario(id)
+        ON DELETE CASCADE
 );
 
 -- Tabela de tarefas

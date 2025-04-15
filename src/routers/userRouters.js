@@ -1,11 +1,21 @@
-const express = require('express')
-const router = express.Router()
-const UserController = require('../controllers/userController')
+const express = require('express');
+const router = express.Router();
+const autenticarToken = require('../middlewares/auth');
+const {
+  createUser,
+  login,
+  listUsers,
+  updateUser,
+  deleteUser
+} = require('../controllers/userController');
 
-// Rotas para usuários
-router.post('/users', UserController.createUser)
-router.get('/users', UserController.listUsers)
-router.delete('/users/:id', UserController.deleteUser)
-router.post('/login', UserController.login)
+// Rotas públicas
+router.post('/users', createUser);
+router.post('/login', login);
 
-module.exports = router
+// Rotas protegidas
+router.get('/users', autenticarToken, listUsers);
+router.put('/users/:id', autenticarToken, updateUser);
+router.delete('/users/:id', autenticarToken, deleteUser);
+
+module.exports = router;

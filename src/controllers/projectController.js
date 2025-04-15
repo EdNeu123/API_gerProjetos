@@ -1,43 +1,79 @@
-const Project = require('../models/project')
+const Project = require('../models/project');
 
-const ProjectController = {
-  createProject: async (req, res) => {
-    try {
-      const { titulo, descricao, usuarioId } = req.body
-      if (!titulo || !descricao) {
-        return res.status(400).json({ erro: 'Todos os campos são obrigatórios' })
-      }
+// POST /api/projects
+// POST /api/projects
+async function createProject(req, res) {
+  try {
+    const { titulo, descricao } = req.body;
+    const usuarioId = req.userId; // <-- ID do usuário autenticado
 
-      // Cria o projeto e, se desejar, associa a um usuário (usuarioId opcional)
-      const projeto = await Project.create({ titulo, descricao, usuarioId })
-      res.status(201).json(projeto)
-    } catch (err) {
-      res.status(500).json({ erro: 'Erro ao criar projeto' })
-    }
-  },
-
-  listProjects: async (req, res) => {
-    try {
-      const projetos = await Project.findAll()
-      res.json(projetos)
-    } catch (err) {
-      res.status(500).json({ erro: 'Erro ao listar projetos' })
-    }
-  },
-
-  deleteProject: async (req, res) => {
-    try {
-      const { id } = req.params
-      const deletado = await Project.destroy({ where: { id } })
-      if (deletado) {
-        res.status(204).send()
-      } else {
-        res.status(404).json({ erro: 'Projeto não encontrado' })
-      }
-    } catch (err) {
-      res.status(500).json({ erro: 'Erro ao excluir projeto' })
-    }
+    const novoProjeto = await Project.create({ titulo, descricao, usuarioId });
+    res.status(201).json(novoProjeto);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: 'Erro ao criar projeto' });
   }
 }
 
-module.exports = ProjectController
+
+// GET /api/projects
+async function listProjects(req, res) {
+  try {
+    const usuarioId = req.userId;
+    const projetos = await Project.findAll({ where: { usuarioId } });
+    res.json(projetos);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: 'Erro ao listar projetos' });
+  }
+}
+
+// PUT /api/projects/:id
+async function updateProject(req, res) {
+  try {
+    const { id } = req.params;
+    const { titulo, descricao } = req.body;
+    const usuarioId = req.userId;
+
+    const projeto = await Project.findOne({ where: { id, usuarioId } });
+
+    if (!projeto) {
+      return res.status(404).json({ erro: 'Projeto não encontrado ou não autorizado' });
+    }
+
+    projeto.titulo = titulo || projeto.titulo;
+    projeto.descricao = descricao || projeto.descricao;
+
+    await projeto.save();
+    res.json(projeto);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: 'Erro ao atualizar projeto' });
+  }
+}
+
+// DELETE /api/projects/:id
+async function deleteProject(req, res) {
+  try {
+    const { id } = req.params;
+    const usuarioId = req.userId;
+
+    const deletado = await Project.destroy({ where: { id, usuarioId } });
+
+    if (!deletado) {
+      return res.status(404).json({ erro: 'Projeto não encontrado ou não autorizado' });
+    }
+
+    res.status(204).send();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: 'Erro ao excluir projeto' });
+  }
+}
+
+module.exports = {
+  createProject,
+  listProjects,
+  updateProject,
+  deleteProject
+};

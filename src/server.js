@@ -1,37 +1,31 @@
-const path = require('path')
-require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') })
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
+const sequelize = require('./config/database');
 
-// Conexão com o banco via Sequelize
-const sequelize = require('./config/database')
+app.use(express.json());
 
-// Rotas organizadas por arquivo (pasta "Routers")
-const userRoutes = require('./Routers/userRouters')
-const projectRoutes = require('./Routers/projectRouters')
-const taskRoutes = require('./Routers/taskRouters')
+// Importa as rotas (já com middleware interno)
+const userRoutes    = require('./routers/userRouters');
+const projectRoutes = require('./routers/projectRouters');
+const taskRoutes    = require('./routers/taskRouters');
 
-app.use(express.json())
+// Prefixo comum
+app.use('/api', userRoutes);
+app.use('/api', projectRoutes);
+app.use('/api', taskRoutes);
 
-// Usa os arquivos de rotas com o prefixo /api
-app.use('/api', userRoutes)
-app.use('/api', projectRoutes)
-app.use('/api', taskRoutes)
-
-// Função async para sincronizar os modelos e iniciar o servidor
 async function startServer() {
   try {
-    await sequelize.sync()
-    console.log('Banco de dados sincronizado com Sequelize')
-
-    const PORT = process.env.PORT || 3000
-    app.listen(PORT, () => {
-      console.log(`Servidor rodando na porta ${PORT}`)
-    })
-  } catch (error) {
-    console.error('Erro ao sincronizar com o banco de dados:', error)
+    await sequelize.sync();
+    console.log('Banco de dados sincronizado com Sequelize');
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+  } catch (err) {
+    console.error('Erro ao sincronizar com o banco de dados:', err);
   }
 }
 
-startServer()
+startServer();

@@ -1,9 +1,9 @@
-const { DataTypes } = require('sequelize')
-const sequelize = require('../config/database')
-const Usuario = require('./user')
-const Projeto = require('./project') // Note: O nome exportado de 'project' pode ser ajustado se necessário
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+const User = require('./user');
+const Project = require('./project');
 
-const Tarefa = sequelize.define('Tarefa', {
+const Task = sequelize.define('Task', {
   titulo: {
     type: DataTypes.STRING,
     allowNull: false
@@ -11,13 +11,30 @@ const Tarefa = sequelize.define('Tarefa', {
   status: {
     type: DataTypes.BOOLEAN,
     defaultValue: false
+  },
+  projetoId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Project,
+      key: 'id'
+    },
+    onDelete: 'CASCADE'
+  },
+  usuarioId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: 'id'
+    },
+    onDelete: 'CASCADE'
   }
-})
+});
 
-// Definindo os relacionamentos
-Tarefa.belongsTo(Usuario, { foreignKey: 'usuarioId' })
-Tarefa.belongsTo(Projeto, { foreignKey: 'projetoId' })
-Usuario.hasMany(Tarefa, { foreignKey: 'usuarioId' })
-Projeto.hasMany(Tarefa, { foreignKey: 'projetoId' })
+Task.belongsTo(User, { foreignKey: 'usuarioId' });
+Task.belongsTo(Project, { foreignKey: 'projetoId' });
+User.hasMany(Task, { foreignKey: 'usuarioId' });
+Project.hasMany(Task, { foreignKey: 'projetoId' });
 
-module.exports = Tarefa
+module.exports = Task;
