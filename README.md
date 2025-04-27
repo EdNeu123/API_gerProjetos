@@ -40,3 +40,34 @@ API RESTful desenvolvida em **Node.js** para o gerenciamento de projetos, tarefa
 - **Nodemon** – recarregamento automático durante o desenvolvimento
 - **Dotenv** – variáveis de ambiente
 - **Docker (opcional)** – para facilitar o setup do ambiente
+
+## 🚀 Instalação
+
+1. Clone o repositório:  
+   ```bash
+   git clone https://github.com/EdNeu123/API_gerProjetos.git
+
+2. Acesse o diretório do projeto:  
+   ```bash
+   cd API_gerProjetos
+
+3. Instale as dependências:  
+   ```bash
+   npm install
+
+4. Crie (ou ajuste) o arquivo `.env` na raiz, copiando de `.env.example` e definindo:  
+   ```env
+   PORT=3000
+   DB_HOST=localhost
+   DB_USER=root
+   DB_PASSWORD=
+   DB_NAME=api_projeto
+   JWT_SECRET=uma_chave_bem_secreta
+
+5. Garanta que o banco de dados exista e rode as migrations (ou crie as tabelas manualmente):  
+   ```bash
+   mysql -u root -p < db.sql
+
+6. Inicie o servidor:  
+   ```bash
+   npm start
