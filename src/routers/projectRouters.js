@@ -1,16 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const autenticarToken = require('../middlewares/auth');
-const {
-  createProject,
-  listProjects,
-  updateProject,
-  deleteProject
-} = require('../controllers/projectController');
+const projectController = require('../controllers/projectController');
+const authenticateToken = require('../middleware/authMiddleware');
 
-router.post('/projects', autenticarToken, createProject);
-router.get('/projects', autenticarToken, listProjects);
-router.put('/projects/:id', autenticarToken, updateProject);
-router.delete('/projects/:id', autenticarToken, deleteProject);
+router.post('/', authenticateToken, projectController.createProject);
+router.get('/', authenticateToken, projectController.getAllProjects);
+router.put('/:id', authenticateToken, projectController.updateProject);
+router.delete('/:id', authenticateToken, projectController.deleteProject);
 
 module.exports = router;
+
