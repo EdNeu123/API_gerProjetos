@@ -55,7 +55,7 @@ API RESTful desenvolvida em **Node.js** para o gerenciamento de projetos, tarefa
    ```bash
    npm install
 
-4. Crie (ou ajuste) o arquivo `.env` na raiz, copiando de `.env.example` e definindo:  
+4. Crie o arquivo `.env` na raiz, copiando de `.env.example` e definindo:  
    ```env
    PORT=3000
    DB_HOST=localhost
