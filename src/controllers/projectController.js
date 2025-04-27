@@ -62,20 +62,20 @@ module.exports = {
   },
 
   async deleteProject(req, res) {
-    const { id } = req.params
+    const { id } = req.params;
     try {
-      const projeto = await Projeto.findByPk(id)
+      const projeto = await Projeto.findByPk(id);
       if (!projeto) {
-        return res.status(404).json({ error: 'Projeto não encontrado.' })
+        return res.status(404).json({ error: 'Projeto não encontrado.' });
       }
       if (projeto.id_usuario !== req.user.id_usuario) {
-        return res.status(403).json({ error: 'Acesso negado: não dono do projeto.' })
+        return res.status(403).json({ error: 'Acesso negado: você não é o proprietário do projeto.' });
       }
-      await Projeto.destroy({ where: { id_projeto: id } })
-      res.status(204).send()
+      await Projeto.destroy({ where: { id_projeto: id } });
+      res.status(200).json({ message: 'Projeto excluído com sucesso.' });
     } catch (err) {
-      console.error(err)
-      res.status(500).json({ error: 'Erro ao remover projeto.', details: err.message })
+      console.error(err);
+      res.status(500).json({ error: 'Erro ao remover projeto.', details: err.message });
     }
   }
 }

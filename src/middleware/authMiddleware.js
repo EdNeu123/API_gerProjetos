@@ -6,12 +6,12 @@ function authenticateToken(req, res, next) {
   const token = authHeader && authHeader.split(' ')[1];                     
 
   if (!token) {
-    return res.status(401).json({ error: 'Token não fornecido.' });         
+    return res.status(401).json({ error: 'Token em Branco.' });         
   }
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {            
     if (err) {
-      return res.status(403).json({ error: 'Token inválido.' });           
+      return res.status(403).json({ error: 'Token incorreto.' });           
     }
     req.user = decoded;                                                  
     next();

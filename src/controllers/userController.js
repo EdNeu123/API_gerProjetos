@@ -50,17 +50,18 @@ module.exports = {
   },
 
   async deleteUser(req, res) {
-    const { id } = req.params
+    const { id } = req.params;
     try {
-      const deleted = await Usuario.destroy({ where: { id_usuario: id } })
+      const deleted = await Usuario.destroy({ where: { id_usuario: id } });
       if (!deleted) {
-        return res.status(404).json({ error: 'Usuário não encontrado.' })
+        return res.status(404).json({ error: 'Usuário não encontrado.' });
       }
-      res.status(204).send()
-    } catch {
-      res.status(500).json({ error: 'Erro ao remover usuário.' })
+      res.status(200).json({ message: 'Usuário excluído com sucesso.' });
+    } catch (error) {
+      res.status(500).json({ error: 'Erro ao remover usuário.' });
     }
-  },
+  }
+  ,
 
   async login(req, res) {
     const { email, senha } = req.body

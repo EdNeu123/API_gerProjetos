@@ -90,20 +90,20 @@ module.exports = {
   },
 
   async deleteTask(req, res) {
-    const { id } = req.params
+    const { id } = req.params;
     try {
-      const tarefa = await Tarefa.findByPk(id)
+      const tarefa = await Tarefa.findByPk(id);
       if (!tarefa) {
-        return res.status(404).json({ error: 'Tarefa não encontrada.' })
+        return res.status(404).json({ error: 'Tarefa não encontrada.' });
       }
       if (tarefa.id_usuario !== req.user.id_usuario) {
-        return res.status(403).json({ error: 'Acesso negado: não dono da tarefa.' })
+        return res.status(403).json({ error: 'Acesso negado: você não é o proprietário da tarefa.' });
       }
-      await Tarefa.destroy({ where: { id_tarefa: id } })
-      res.status(204).send()
+      await Tarefa.destroy({ where: { id_tarefa: id } });
+      res.status(200).json({ message: 'Tarefa excluída com sucesso.' });
     } catch (err) {
-      console.error(err)
-      res.status(500).json({ error: 'Erro ao remover tarefa.', details: err.message })
+      console.error(err);
+      res.status(500).json({ error: 'Erro ao remover tarefa.', details: err.message });
     }
   }
 }

@@ -1,7 +1,7 @@
 const path = require('path');
 const express = require('express');
 const app = express();
-const sequelize = require('./config/database');
+const sequelize = require('./config/DB');
 
 require('dotenv').config({path: path.resolve(__dirname, '../.env')});
 
@@ -20,7 +20,7 @@ app.use('/api/tasks', taskRoutes);
 async function startServer () {
     try {
         await sequelize.sync();
-        console.log('Banco de dados sincronizado com Sequelize');
+        console.log('Banco de dados sincronizado!');
         const PORT = process.env.PORT || 3000;
         app.listen(PORT, () => {
             console.log(`Servidor rodando na porta ${PORT}`);
