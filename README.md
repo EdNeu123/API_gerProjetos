@@ -39,7 +39,6 @@ API RESTful desenvolvida em **Node.js** para o gerenciamento de projetos, tarefa
 - **JWT** – autenticação segura
 - **Nodemon** – recarregamento automático durante o desenvolvimento
 - **Dotenv** – variáveis de ambiente
-- **Docker (opcional)** – para facilitar o setup do ambiente
 
 ## 🚀 Instalação
 
