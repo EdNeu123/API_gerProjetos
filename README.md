@@ -1,4 +1,4 @@
-# 📁 API - Gerenciador de Projetos
+# API - Gerenciador de Projetos
 
 [![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Express](https://img.shields.io/badge/Express-000000?style=flat&logo=express&logoColor=white)](https://expressjs.com/)
@@ -17,12 +17,12 @@ API RESTful desenvolvida em **Node.js** para o gerenciamento de projetos, tarefa
 - Autenticação com **JWT**
 - Listagem, edição e exclusão de usuários (rotas protegidas)
 
-### 📁 Projetos
+### Projetos
 - Criação de projetos vinculados ao usuário autenticado
 - Listagem geral ou por usuário
 - Atualização e remoção de projetos
 
-### ✅ Tarefas
+### Tarefas
 - Criação de tarefas associadas a projetos
 - Atualização de status (concluído/pendente)
 - Listagem por projeto
@@ -30,7 +30,7 @@ API RESTful desenvolvida em **Node.js** para o gerenciamento de projetos, tarefa
 
 ---
 
-## 🧪 Tecnologias e Ferramentas
+## Tecnologias e Ferramentas
 
 - **Node.js** – ambiente de execução
 - **Express** – framework para rotas e middlewares
@@ -40,7 +40,7 @@ API RESTful desenvolvida em **Node.js** para o gerenciamento de projetos, tarefa
 - **Nodemon** – recarregamento automático durante o desenvolvimento
 - **Dotenv** – variáveis de ambiente
 
-## 🚀 Instalação
+## Instalação
 
 1. Clone o repositório:  
    ```bash
@@ -50,11 +50,14 @@ API RESTful desenvolvida em **Node.js** para o gerenciamento de projetos, tarefa
    ```bash
    cd API_gerProjetos
 
-3. Instale as dependências:  
+3. Instale o Script .db:  
+   Usando o XAMP instale as tabelas de dados via inserção SQL
+
+4. Instale as dependências:  
    ```bash
    npm install
 
-4. Crie o arquivo `.env` na raiz, copiando de `.env.example` e definindo:  
+5. Crie o arquivo `.env` na raiz, copiando de `.env.example` e definindo:  
    ```env
    PORT=3000
    DB_HOST=localhost
@@ -63,10 +66,10 @@ API RESTful desenvolvida em **Node.js** para o gerenciamento de projetos, tarefa
    DB_NAME=api_projeto
    JWT_SECRET=uma_chave_bem_secreta
 
-5. Garanta que o banco de dados exista e rode as migrations (ou crie as tabelas manualmente):  
+6. Garanta que o banco de dados exista e rode as migrations (ou crie as tabelas manualmente):  
    ```bash
    mysql -u root -p < db.sql
 
-6. Inicie o servidor:  
+7. Inicie o servidor:  
    ```bash
    npm start
