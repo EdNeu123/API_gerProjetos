@@ -1,0 +1,92 @@
+name: SecurityPipeline (Horusec + Relatório Executivo)
+
+on: [push]
+
+jobs:
+  horusec-scan:
+    name: Horusec SAST Scan
+    runs-on: ubuntu-latest
+
+    permissions:
+      security-events: write
+      contents: read
+
+    steps:
+      - name: 1. Check out do código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 2. Instalar Horusec
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest /usr/local/bin
+          horusec version
+
+      - name: 3. Executar varredura Horusec (modo auditoria)
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          horusec start -p . \
+            -e="true" \
+            --disable-docker="true" \
+            --ignore="*/node_modules/*" \
+            -o="sarif" \
+            -O="./horusec-results.sarif" \
+            --return-error=false \
+            --information-severity=true 2>&1 | tee horusec-run.log
+
+          HORUSEC_EXIT=${PIPESTATUS[0]}
+          echo "HORUSEC_EXIT=${HORUSEC_EXIT}"
+          if [ $HORUSEC_EXIT -ne 0 ]; then
+            echo "Horusec retornou código ${HORUSEC_EXIT}. Verificar horusec-run.log"
+          fi
+          if [ ! -s "./horusec-results.sarif" ]; then
+            echo "horusec-results.sarif não foi gerado ou está vazio."
+          fi
+
+      - name: 4. Upload dos logs e resultado SARIF
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: horusec-logs
+          path: |
+            horusec-run.log
+            horusec-results.sarif
+
+      - name: 5. Upload do Relatório SARIF ao GitHub
+        if: always() && hashFiles('horusec-results.sarif') != ''
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: horusec-results.sarif
+          category: horusec-sast
+
+      - name: 6. Gerar Relatório Executivo (Sumário)
+        if: always()
+        run: |
+          echo "Instalando jq..."
+          sudo apt-get install -y jq
+          
+          echo "=================================================="
+          echo "         RELATÓRIO EXECUTIVO DE SEGURANÇA         "
+          echo "=================================================="
+          
+          if [ -s "./horusec-results.sarif" ]; then
+            TOTAL=$(jq '.runs[0].results | length' horusec-results.sarif)
+            ERRORS=$(jq '[.runs[0].results[] | select(.level == "error")] | length' horusec-results.sarif)
+            WARNINGS=$(jq '[.runs[0].results[] | select(.level == "warning")] | length' horusec-results.sarif)
+            NOTES=$(jq '[.runs[0].results[] | select(.level == "note")] | length' horusec-results.sarif)
+
+            echo "Repositório: ${{ github.repository }}"
+            echo "Commit: ${{ github.sha }}"
+            echo ""
+            echo "--- Resumo das Vulnerabilidades ---"
+            echo "Total de Apontamentos: $TOTAL"
+            echo "Falhas Críticas/Altas (Errors): $ERRORS"
+            echo "Falhas Médias (Warnings): $WARNINGS"
+            echo "Falhas Baixas (Notes): $NOTES"
+          else
+            echo "Scan não gerou resultados. Possível falha no passo 3."
+          fi
+          
+          echo "=================================================="
